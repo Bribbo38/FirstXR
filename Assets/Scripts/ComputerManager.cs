@@ -25,6 +25,7 @@ public class ComputerManager : MonoBehaviour
             moving = MovingState.Opening;
     }
 
+    [System.Obsolete]
     public void ToggleDesktop(GameObject desktop)
     {
         desktop.SetActive(!desktop.active);
@@ -33,7 +34,7 @@ public class ComputerManager : MonoBehaviour
     public void ToggleTrunk(GameObject trunk)
     {
         RigidbodyConstraints constraints = trunk.GetComponent<Rigidbody>().constraints;
-        GameObject handle = trunk.transform.GetChild(0).gameObject;
+        GameObject handle = GameObject.Find("TrunkHandle").gameObject;
 
         if (constraints == RigidbodyConstraints.FreezeAll)
         {
