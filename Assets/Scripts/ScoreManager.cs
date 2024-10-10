@@ -54,7 +54,7 @@ public class ScoreManager : MonoBehaviour
             PlayerPrefs.SetInt("bestScore3", currentScore);
         }
 
-        SceneManager.LoadScene("BasicScene");
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void UpdateUI()
