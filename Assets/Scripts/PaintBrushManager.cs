@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PaintBrushManager : MonoBehaviour
 {
+    #region Properties ---------------------------------
     [SerializeField]
     private GameObject brush;
 
@@ -18,7 +19,21 @@ public class PaintBrushManager : MonoBehaviour
     private float colorAlpha = 0f;
 
     private bool isGettingColor = false;
+    #endregion
 
+    #region Cycle Methos ---------------------------------
+    private void Update()
+    {
+        // Aumenta gradualmente l’alpha quando sta assorbendo colore
+        if (isGettingColor && colorAlpha < 1f)
+            colorAlpha += Time.deltaTime;  // Modifica per regolare velocità di assorbimento
+
+        // Aggiorna il colore del pennello con il nuovo alpha
+        UpdateBrushColor();
+    }
+    #endregion
+
+    #region Collision Methos ---------------------------------
     private void OnCollisionEnter(Collision collision)
     {
         // Controlla se l'oggetto con cui si è collisi è un secchio
@@ -51,19 +66,12 @@ public class PaintBrushManager : MonoBehaviour
         // Quando si allontana dal secchio, interrompe il riempimento di colore
         isGettingColor = false;
     }
+    #endregion
 
-    private void Update()
-    {
-        // Aumenta gradualmente l’alpha quando sta assorbendo colore
-        if (isGettingColor && colorAlpha < 1f)
-            colorAlpha += Time.deltaTime;  // Modifica per regolare velocità di assorbimento
-
-        // Aggiorna il colore del pennello con il nuovo alpha
-        UpdateBrushColor();
-    }
-
+    #region Support Methos ---------------------------------
     private void UpdateColorState(string bucketName)
     {
+        // Controllo il nome del secchio e imposto lo stato del colore di conseguenza
         if (bucketName.Contains("Red"))
             colorState = ColorState.Red;
         else if (bucketName.Contains("Green"))
@@ -76,28 +84,36 @@ public class PaintBrushManager : MonoBehaviour
 
     private void ApplyBrushColorToObject(Collision collision)
     {
-        Color colorToApply = GetColorFromState(colorState, colorAlpha);
+        // Recupero il colore da applicare
+        Color colorToApply = GetColorFromState(colorState);
+        // Prendo il Renderer dell'oggetto
         Renderer objectRenderer = collision.gameObject.GetComponent<Renderer>();
+        // Imposto il colore all'oggetto
         if (objectRenderer != null)
             objectRenderer.material.color = colorToApply;
     }
 
     private void UpdateBrushColor()
     {
-        Color brushColor = GetColorFromState(colorState, colorAlpha);
+        // Recupero il colore da applicare
+        Color brushColor = GetColorFromState(colorState);
+        // Prendo il Renderer dell'oggetto
         Renderer brushRenderer = brush.GetComponent<Renderer>();
+        // Imposto il colore all'oggetto
         if (brushRenderer != null)
             brushRenderer.material.color = brushColor;
     }
 
-    private Color GetColorFromState(ColorState state, float alpha)
+    private Color GetColorFromState(ColorState state)
     {
+        // Controllo lo stato e ritorno il colore di conseguenza, applicando anche l'alpha
         switch (state)
         {
-            case ColorState.Red: return new Color(1, 0, 0, alpha);
-            case ColorState.Green: return new Color(0, 1, 0, alpha);
-            case ColorState.Blue: return new Color(0, 0, 1, alpha);
+            case ColorState.Red: return new Color(1, 0, 0, colorAlpha);
+            case ColorState.Green: return new Color(0, 1, 0, colorAlpha);
+            case ColorState.Blue: return new Color(0, 0, 1, colorAlpha);
             default: return new Color(1, 1, 1, .5f);  // Colore semi-trasparente quando il pennello è vuoto
         }
     }
+    #endregion
 }
