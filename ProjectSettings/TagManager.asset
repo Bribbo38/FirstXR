@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Anchor
   - KeyCard
+  - PaintBucket
   layers:
   - Default
   - TransparentFX
